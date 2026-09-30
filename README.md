@@ -4,6 +4,8 @@
 
 <sub>基于 PBIP / PBIR / TMDL —— Power BI Desktop 的文本工程格式。</sub>
 
+[![tests](https://github.com/YiJian886/powerbi-as-code/actions/workflows/tests.yml/badge.svg)](https://github.com/YiJian886/powerbi-as-code/actions/workflows/tests.yml)
+
 ---
 
 ## 为什么要做这个
