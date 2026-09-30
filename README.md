@@ -244,4 +244,4 @@ CI 在 `.github/workflows/tests.yml`，每次推送跑测试 + 模板校验 + �
 
 ## License
 
-MIT
+[MIT](LICENSE) —— 随你怎么用，包括商用。
