@@ -1,6 +1,8 @@
-# pbi-workspace
+# powerbi-as-code
 
 把 Power BI 报表变成**纯文本工程**：可 diff、可 code review、可进 CI。
+
+<sub>基于 PBIP / PBIR / TMDL —— Power BI Desktop 的文本工程格式。</sub>
 
 ---
 
@@ -183,7 +185,7 @@ PBIP 的目录形态：
 ## 目录结构
 
 ```
-pbi-workspace/
+powerbi-as-code/
 ├── README.md                     # 本文件
 ├── environment-facts.md          # 工程决策记录与踩坑结论（先读这个）
 ├── requirements.md               # 需求采集模板

@@ -7,7 +7,7 @@
 // 1) 单个 CSV（第一行是表头）
 // ─────────────────────────────────────────────────────────
 let
-    DataFolder = "C:\path\to\pbi-workspace\data",
+    DataFolder = "C:\path\to\data",
     Source = Csv.Document(
         File.Contents(DataFolder & "\orders.csv"),
         [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
@@ -21,7 +21,7 @@ in
 //    把上面那段注释掉，用这段
 // ─────────────────────────────────────────────────────────
 // let
-//     DataFolder = "C:\path\to\pbi-workspace\data",
+//     DataFolder = "C:\path\to\data",
 //     Source = Folder.Files(DataFolder),
 //     Filtered = Table.SelectRows(Source, each Text.EndsWith([Name], ".csv")),
 //     #"Added Custom" = Table.AddColumn(Filtered, "Content2", each Csv.Document([Content], [Delimiter = ",", Encoding = 65001])),

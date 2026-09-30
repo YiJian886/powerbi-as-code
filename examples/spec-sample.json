@@ -6,7 +6,7 @@
 
   "dataSource": {
     "kind": "csv",
-    "path": "C:\\path\\to\\pbi-workspace\\data\\orders.csv"
+    "path": "C:\\path\\to\\data\\orders.csv"
   },
 
   "model": {

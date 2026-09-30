@@ -7,7 +7,7 @@
 //    Desktop 刷新数据时读的是本地文件。
 
 let
-    DataFolder = "C:\path\to\pbi-workspace\data",
+    DataFolder = "C:\path\to\data",
     Source = Excel.Workbook(File.Contents(DataFolder & "\orders.xlsx"), null, true),
     Sheet = Source{[Item = "Sheet1", Kind = "Sheet"]}[Data],
     #"Promoted Headers" = Table.PromoteHeaders(Sheet, [PromoteAllScalars = true]),

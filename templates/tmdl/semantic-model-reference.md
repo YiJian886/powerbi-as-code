@@ -46,7 +46,7 @@ table 'Orders'
         mode: Import
         source =
             let
-                Source = Csv.Document(File.Contents("C:\path\to\pbi-workspace\data\orders.csv"),
+                Source = Csv.Document(File.Contents("C:\path\to\data\orders.csv"),
                          [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
                 #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
             in

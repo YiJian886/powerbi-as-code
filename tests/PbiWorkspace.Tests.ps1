@@ -1,6 +1,6 @@
 ﻿#Requires -Version 5.1
 <#
-    pbi-workspace 测试集。
+    powerbi-as-code 测试集。
 
     分四组：
       仓库约定   —— BOM、换行、真实数据不入库这类「不写测试就一定会违反」的规则
