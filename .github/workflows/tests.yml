@@ -1,0 +1,51 @@
+name: tests
+
+# 每次推送和 PR 都跑：
+#   1. 仓库约定检查（BOM、真实数据不入库）
+#   2. 模板完整性 + 文档与模板的 schema 版本是否同步
+#   3. 脚手架与生成器的产出结构校验
+#   4. 校验脚本与生成器的正负用例
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 显示环境
+        shell: powershell
+        run: |
+          $PSVersionTable.PSVersion
+          git --version
+
+      - name: 跑测试
+        shell: powershell
+        run: |
+          # run-tests.ps1 会在缺 Pester 5+ 时自动装到当前用户范围，不需要管理员
+          .\tests\run-tests.ps1 -Output Detailed
+
+      - name: 校验模板工程
+        shell: powershell
+        run: |
+          .\scripts\validate-json.ps1 -Project .\templates\pbir
+
+      - name: 脚手架冒烟测试
+        shell: powershell
+        run: |
+          .\scripts\new-project.ps1 -Name CiSmoke
+          .\scripts\validate-json.ps1 -Project .\projects\CiSmoke
+          .\scripts\inspect-project.ps1 -Project .\projects\CiSmoke
+
+      - name: 生成器冒烟测试
+        shell: powershell
+        run: |
+          .\scripts\build-from-spec.ps1 -Spec .\examples\spec-sample.json -OutRoot .\projects
+          .\scripts\validate-json.ps1 -Project .\projects\SalesDash
+          .\scripts\inspect-project.ps1 -Project .\projects\SalesDash
