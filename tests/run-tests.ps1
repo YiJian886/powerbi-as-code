@@ -17,10 +17,20 @@
 [CmdletBinding()]
 param(
     [ValidateSet('None', 'Normal', 'Detailed', 'Diagnostic')]
-    [string]$Output = 'Normal'
+    [string]$Output = 'Normal',
+
+    # 重新生成黄金文件（生成器测试用）。改完生成器、确认新输出是对的之后才跑这个。
+    [switch]$UpdateGolden
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($UpdateGolden) {
+    $env:PBIW_UPDATE_GOLDEN = '1'
+    Write-Host '黄金文件模式：会用当前生成结果覆盖 tests\expected\ 下的基准。' -ForegroundColor Yellow
+    Write-Host '更新完记得 review 一遍 git diff。' -ForegroundColor Yellow
+    Write-Host ''
+}
 
 # ---------------------------------------------------------------- 确保有 Pester
 $pester = Get-Module -ListAvailable -Name Pester |

@@ -2,13 +2,19 @@
 # Usage: powershell -ExecutionPolicy Bypass -File scripts/new-project.ps1 -Name SalesDash [-Force]
 param(
     [Parameter(Mandatory = $true)][string]$Name,
+
+    # 输出根目录。默认 <仓库>\projects
+    [string]$OutRoot,
+
     [switch]$Force
 )
 
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path $PSScriptRoot -Parent
 $tmpl = Join-Path $workspace 'templates\pbir'
-$dst  = Join-Path $workspace "projects\$Name"
+if (-not $OutRoot) { $OutRoot = Join-Path $workspace 'projects' }
+if (-not (Test-Path $OutRoot)) { New-Item -ItemType Directory -Force -Path $OutRoot | Out-Null }
+$dst = Join-Path $OutRoot $Name
 
 if (-not (Test-Path $tmpl)) { throw "Template dir missing: $tmpl" }
 if (Test-Path $dst) {

@@ -1,0 +1,24 @@
+{
+    "visual@Overview":  {
+                            "name":  "chart_orders_by_month",
+                            "visualType":  "clusteredBarChart",
+                            "position":  "780,40 700x400",
+                            "hasFilter":  false,
+                            "sortBy":  null,
+                            "roles":  {
+                                          "Category":  [
+                                                           {
+                                                               "queryRef":  "成交记录.月份",
+                                                               "nativeQueryRef":  "月份"
+                                                           }
+                                                       ],
+                                          "Y":  [
+                                                    {
+                                                        "queryRef":  "Sum(成交记录.单量)",
+                                                        "nativeQueryRef":  "单量 的求和",
+                                                        "Function":  0
+                                                    }
+                                                ]
+                                      }
+                        }
+}

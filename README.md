@@ -47,8 +47,8 @@ PBIP 的目录形态：
 | 校验工程内所有 JSON + 结构自检 | `scripts/validate-json.ps1` | ✅ 可用 |
 | 打印工程结构摘要（页面/视觉/度量） | `scripts/inspect-project.ps1` | ✅ 可用 |
 | 从你的导出提取 schema 版本与主题 | `scripts/setup-from-export.ps1` | ✅ 可用 |
-| 从 YAML 需求声明生成工程 | `scripts/build-from-spec.ps1` | 🚧 开发中 |
-| 自动化测试（17 个用例） | `tests/run-tests.ps1` | ✅ 可用 |
+| **从 JSON 需求声明生成工程** | `scripts/build-from-spec.ps1` | ✅ 可用 |
+| 自动化测试（29 个用例） | `tests/run-tests.ps1` | ✅ 可用 |
 
 模板库（`templates/`）冻结了一套经过实测的 schema 版本和真实视觉样例，
 **这是整个仓库最有价值的部分**——它避免了从零摸索 PBIR 的 JSON 结构。
@@ -80,7 +80,52 @@ PBIP 的目录形态：
 .\scripts\inspect-project.ps1 -Project .\projects\SalesDash
 ```
 
-### 3. 在 Desktop 里打开
+### 3. 或者：写一份 spec，直接生成
+
+不想手工改 JSON 的话，把需求写成一份 spec：
+
+```json
+{
+  "name": "SalesDash",
+  "dataSource": { "kind": "csv", "path": "C:\\path\\to\\data\\orders.csv" },
+  "model": {
+    "table": "成交记录",
+    "columns": [
+      { "name": "渠道",   "dataType": "string" },
+      { "name": "成交额", "dataType": "double", "formatString": "#,##0.00" }
+    ],
+    "measures": [
+      { "name": "总成交额", "expression": "SUM('成交记录'[成交额])" }
+    ]
+  },
+  "pages": [
+    { "name": "Overview", "displayName": "总览",
+      "visuals": [ {
+        "name": "chart_amount_by_channel",
+        "type": "clusteredBarChart",
+        "position": { "x": 40, "y": 40, "width": 700, "height": 400 },
+        "sortBy": "Descending",
+        "roles": {
+          "Category": [ { "column": "渠道" } ],
+          "Y":        [ { "column": "成交额", "aggregation": "Sum" } ]
+        }
+      } ]
+    }
+  ]
+}
+```
+
+```powershell
+.\scripts\build-from-spec.ps1 -Spec .\my-spec.json
+```
+
+产出：完整的 TMDL 模型（表/列/度量/M 分区）+ PBIR 页面与视觉。
+完整示例见 [`examples/spec-sample.json`](examples/spec-sample.json)。
+
+**为什么 spec 用 JSON 而不是 YAML**：PowerShell 5.1 没有内置 YAML 解析器，
+引第三方模块就破坏了本仓库「零依赖」的前提。JSON 原生支持，且 YAML 是 JSON 的超集。
+
+### 4. 在 Desktop 里打开
 
 双击 `projects\SalesDash\SalesDash.pbip`。如果数据源需要拉数，点「刷新」。
 
@@ -128,6 +173,10 @@ PBIP 的目录形态：
 
 - 生成的工程没有在真实 Desktop 里逐个打开验证过（这一步需要人工操作）
 - TMDL 侧语法参考来自文档整理，**未逐条实测**
+- **聚合函数的枚举值只有 `CountNonNull`(=5) 是从真实导出核对过的**，其余按
+  Analysis Services 的枚举顺序推断。用到别的聚合时，先在 Desktop 里手动建一个
+  同类型视觉、导出确认再依赖
+- 生成器目前只覆盖 `clusteredBarChart`（因为只有这一种有真实样例可对照）
 
 ---
 
@@ -176,7 +225,7 @@ pbi-workspace/
 .\tests\run-tests.ps1 -Output Detailed
 ```
 
-17 个用例，分四组：
+29 个用例，分五组：
 
 | 组 | 测什么 |
 |---|---|
@@ -184,6 +233,7 @@ pbi-workspace/
 | 模板完整性 | 必备文件齐全、JSON 可解析、**NOTES.md 记录的版本与模板文件实际一致**（防文档漂移） |
 | 脚手架 | 生成的结构完整、`.pbip` 里的相对路径真实存在 |
 | 校验脚本 | 合法工程通过 + **坏 JSON 必须被拒绝**（负面测试） |
+| 生成器 | 结构完整、中文未被转义、**不残留模板字段**、与黄金文件逐字节一致、四类错误输入都能报错 |
 
 第三组里那条「文档与模板版本是否同步」是这套测试里最有价值的一条：
 文档写 3.3.0 而文件是 3.4.0 这种漂移人工发现不了，但会让每个照着做的人生成打不开的工程。

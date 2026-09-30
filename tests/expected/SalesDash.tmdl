@@ -1,0 +1,30 @@
+table '成交记录'
+
+    column '月份'
+        dataType: string
+
+    column '渠道'
+        dataType: string
+
+    column '成交额'
+        dataType: double
+        formatString: '#,##0.00'
+
+    column '单量'
+        dataType: int64
+        summarizeBy: sum
+
+    measure '总成交额' = SUM('成交记录'[成交额])
+        formatString: '#,##0.00'
+
+    measure '总单量' = SUM('成交记录'[单量])
+        formatString: '#,##0'
+
+    partition '成交记录' = m
+        mode: Import
+        source =
+            let
+                Source = Csv.Document(File.Contents("C:\path\to\pbi-workspace\data\orders.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+                #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+            in
+                #"Promoted Headers"

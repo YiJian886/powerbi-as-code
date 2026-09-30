@@ -1,0 +1,61 @@
+{
+  "name": "SalesDash",
+  "description": "示例：按渠道看成交额。用来演示 spec → 工程的完整流程。",
+
+  "_note": "这里刻意用了和 templates/pbir/examples 里那份样例完全不同的表名与列名。这样一旦生成结果里出现模板的列名，就说明有残留没清干净。",
+
+  "dataSource": {
+    "kind": "csv",
+    "path": "C:\\path\\to\\pbi-workspace\\data\\orders.csv"
+  },
+
+  "model": {
+    "table": "成交记录",
+    "columns": [
+      { "name": "月份",   "dataType": "string" },
+      { "name": "渠道",   "dataType": "string" },
+      { "name": "成交额", "dataType": "double", "formatString": "#,##0.00" },
+      { "name": "单量",   "dataType": "int64",  "summarizeBy": "sum" }
+    ],
+    "measures": [
+      {
+        "name": "总成交额",
+        "expression": "SUM('成交记录'[成交额])",
+        "formatString": "#,##0.00"
+      },
+      {
+        "name": "总单量",
+        "expression": "SUM('成交记录'[单量])",
+        "formatString": "#,##0"
+      }
+    ]
+  },
+
+  "pages": [
+    {
+      "name": "Overview",
+      "displayName": "总览",
+      "visuals": [
+        {
+          "name": "chart_amount_by_channel",
+          "type": "clusteredBarChart",
+          "position": { "x": 40, "y": 40, "width": 700, "height": 400 },
+          "sortBy": "Descending",
+          "roles": {
+            "Category": [ { "column": "渠道" } ],
+            "Y":        [ { "column": "成交额", "aggregation": "Sum" } ]
+          }
+        },
+        {
+          "name": "chart_orders_by_month",
+          "type": "clusteredBarChart",
+          "position": { "x": 780, "y": 40, "width": 700, "height": 400 },
+          "roles": {
+            "Category": [ { "column": "月份" } ],
+            "Y":        [ { "column": "单量", "aggregation": "Sum" } ]
+          }
+        }
+      ]
+    }
+  ]
+}
