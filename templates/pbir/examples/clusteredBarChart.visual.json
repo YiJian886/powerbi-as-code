@@ -1,0 +1,154 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+    "name":  "00ab28fecf54f212ebbb",
+    "position":  {
+                     "x":  12.698806386606726,
+                     "y":  0,
+                     "z":  0,
+                     "height":  952.41047899550449,
+                     "width":  1460.3627344597737,
+                     "tabOrder":  0
+                 },
+    "visual":  {
+                   "visualType":  "clusteredBarChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "销售明细"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "销售额"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "销售明细.销售额",
+                                                                                             "nativeQueryRef":  "销售额",
+                                                                                             "active":  true
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Series":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "销售明细"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "客户编号"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "销售明细.客户编号",
+                                                                                           "nativeQueryRef":  "客户编号"
+                                                                                       }
+                                                                                   ]
+                                                               },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Aggregation":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "销售明细"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "订单数量"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                        "Function":  5
+                                                                                                                    }
+                                                                                                },
+                                                                                      "queryRef":  "CountNonNull(销售明细.订单数量)",
+                                                                                      "nativeQueryRef":  "订单数量 的计数"
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Aggregation":  {
+                                                                                                           "Expression":  {
+                                                                                                                              "Column":  {
+                                                                                                                                             "Expression":  {
+                                                                                                                                                                "SourceRef":  {
+                                                                                                                                                                                  "Entity":  "销售明细"
+                                                                                                                                                                              }
+                                                                                                                                                            },
+                                                                                                                                             "Property":  "订单数量"
+                                                                                                                                         }
+                                                                                                                          },
+                                                                                                           "Function":  5
+                                                                                                       }
+                                                                                   },
+                                                                         "direction":  "Descending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "drillFilterOtherVisuals":  true
+               },
+    "filterConfig":  {
+                         "filters":  [
+                                         {
+                                             "name":  "7facd47fcab899c7563e",
+                                             "field":  {
+                                                           "Column":  {
+                                                                          "Expression":  {
+                                                                                             "SourceRef":  {
+                                                                                                               "Entity":  "销售明细"
+                                                                                                           }
+                                                                                         },
+                                                                          "Property":  "销售额"
+                                                                      }
+                                                       },
+                                             "type":  "Categorical"
+                                         },
+                                         {
+                                             "name":  "d3b264edb3953f3536c8",
+                                             "field":  {
+                                                           "Aggregation":  {
+                                                                               "Expression":  {
+                                                                                                  "Column":  {
+                                                                                                                 "Expression":  {
+                                                                                                                                    "SourceRef":  {
+                                                                                                                                                      "Entity":  "销售明细"
+                                                                                                                                                  }
+                                                                                                                                },
+                                                                                                                 "Property":  "订单数量"
+                                                                                                             }
+                                                                                              },
+                                                                               "Function":  5
+                                                                           }
+                                                       },
+                                             "type":  "Advanced"
+                                         },
+                                         {
+                                             "name":  "a8f68433a33a26d91f9d",
+                                             "field":  {
+                                                           "Column":  {
+                                                                          "Expression":  {
+                                                                                             "SourceRef":  {
+                                                                                                               "Entity":  "销售明细"
+                                                                                                           }
+                                                                                         },
+                                                                          "Property":  "客户编号"
+                                                                      }
+                                                       },
+                                             "type":  "Categorical"
+                                         }
+                                     ]
+                     }
+}

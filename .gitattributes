@@ -1,0 +1,14 @@
+﻿# 统一换行处理
+* text=auto
+
+# PowerShell 脚本：Windows 上按 CRLF 检出；PS 5.1 读 .ps1 需要 UTF-8 BOM，别去掉
+*.ps1 text eol=crlf
+
+# Power BI 工程文件：保持 LF，且不要加 BOM（Power BI 的 JSON 解析器不认）
+*.json text eol=lf
+*.pbip text eol=lf
+*.pbir text eol=lf
+*.tmdl text eol=lf
+*.pbism text eol=lf
+*.pq   text eol=lf
+*.md   text eol=lf
