@@ -32,14 +32,20 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$ExportPath,
 
-    [switch]$Apply
+    [switch]$Apply,
+
+    # 模板根目录。默认是本仓库的 templates\。
+    # 测试时指向临时目录，避免污染真实模板。
+    [string]$TemplateRoot
 )
 
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$templateReport = Join-Path $repoRoot 'templates\pbir\MyReport.Report'
-$notesPath = Join-Path $repoRoot 'templates\pbir\NOTES.md'
+if (-not $TemplateRoot) { $TemplateRoot = Join-Path $repoRoot 'templates' }
+$TemplateRoot = (Resolve-Path $TemplateRoot).Path
+$templateReport = Join-Path $TemplateRoot 'pbir\MyReport.Report'
+$notesPath = Join-Path $TemplateRoot 'pbir\NOTES.md'
 
 # ---------------------------------------------------------------- 定位 Report 目录
 function Resolve-ReportDir {
@@ -108,7 +114,7 @@ $roles = @(
     @{ Label = 'visual.json';                  Filter = @('visual.json', '*.visual.json') }
 )
 
-$templateExamples = Join-Path $repoRoot 'templates\pbir\examples'
+$templateExamples = Join-Path $TemplateRoot 'pbir\examples'
 
 function Get-RoleTable {
     param([string]$ReportRoot, [string]$VisualRoot)
@@ -153,7 +159,9 @@ if (Test-Path $themeSrc) {
     if (-not (Test-Path $themeDst)) { New-Item -ItemType Directory -Force -Path $themeDst | Out-Null }
     $copied = 0
     foreach ($f in (Get-ChildItem $themeSrc -File)) {
-        Copy-Item $f.FullName -Destination $themeDst -Force
+        # Desktop 导出的主题文件带 BOM，这里统一转成无 BOM，跟仓库里其他 JSON 保持一致
+        $text = Get-Content $f.FullName -Raw -Encoding UTF8
+        [System.IO.File]::WriteAllText((Join-Path $themeDst $f.Name), $text, (New-Object System.Text.UTF8Encoding($false)))
         $copied++
         Write-Host "  已复制主题: $($f.Name)"
     }

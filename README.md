@@ -48,7 +48,7 @@ PBIP 的目录形态：
 | 打印工程结构摘要（页面/视觉/度量） | `scripts/inspect-project.ps1` | ✅ 可用 |
 | 从你的导出提取 schema 版本与主题 | `scripts/setup-from-export.ps1` | ✅ 可用 |
 | 从 YAML 需求声明生成工程 | `scripts/build-from-spec.ps1` | 🚧 开发中 |
-| 自动化测试 | `tests/` | 🚧 开发中 |
+| 自动化测试（17 个用例） | `tests/run-tests.ps1` | ✅ 可用 |
 
 模板库（`templates/`）冻结了一套经过实测的 schema 版本和真实视觉样例，
 **这是整个仓库最有价值的部分**——它避免了从零摸索 PBIR 的 JSON 结构。
@@ -128,7 +128,6 @@ PBIP 的目录形态：
 
 - 生成的工程没有在真实 Desktop 里逐个打开验证过（这一步需要人工操作）
 - TMDL 侧语法参考来自文档整理，**未逐条实测**
-- 没有 CI，没有自动化测试 ← 正在补
 
 ---
 
@@ -169,6 +168,27 @@ pbi-workspace/
 2. **JSON 一律 UTF-8 无 BOM。** Power BI 的解析器不认 BOM。
 
 `.gitattributes` 已按这两条配好换行处理。
+
+### 测试
+
+```powershell
+.\tests\run-tests.ps1              # 缺 Pester 5+ 会自动装（当前用户范围，不需要管理员）
+.\tests\run-tests.ps1 -Output Detailed
+```
+
+17 个用例，分四组：
+
+| 组 | 测什么 |
+|---|---|
+| 仓库约定 | `.ps1` 有 BOM、JSON 无 BOM、真实数据没被 git 跟踪 |
+| 模板完整性 | 必备文件齐全、JSON 可解析、**NOTES.md 记录的版本与模板文件实际一致**（防文档漂移） |
+| 脚手架 | 生成的结构完整、`.pbip` 里的相对路径真实存在 |
+| 校验脚本 | 合法工程通过 + **坏 JSON 必须被拒绝**（负面测试） |
+
+第三组里那条「文档与模板版本是否同步」是这套测试里最有价值的一条：
+文档写 3.3.0 而文件是 3.4.0 这种漂移人工发现不了，但会让每个照着做的人生成打不开的工程。
+
+CI 在 `.github/workflows/tests.yml`，每次推送跑测试 + 模板校验 + 脚手架冒烟。
 
 ---
 
