@@ -75,19 +75,25 @@ BeforeAll {
         param([string]$Name, [string]$Actual)
         New-Item -ItemType Directory -Force -Path $GoldenDir | Out-Null
         $goldenPath = Join-Path $GoldenDir $Name
+        # 统一成 LF 再比：.gitattributes 把 *.json 配成检出为 LF，
+        # 而 ConvertTo-Json 在 Windows 上产出 CRLF。不归一化的话本地能过、CI 上必挂。
+        $normalized = $Actual.Replace("`r`n", "`n")
+
         if ($UpdateGolden -or -not (Test-Path $goldenPath)) {
-            [System.IO.File]::WriteAllText($goldenPath, $Actual, (New-Object System.Text.UTF8Encoding($false)))
+            [System.IO.File]::WriteAllText($goldenPath, $normalized, (New-Object System.Text.UTF8Encoding($false)))
             return $true
         }
-        $expected = Get-Content $goldenPath -Raw -Encoding UTF8
-        return ($expected -eq $Actual)
+        $expected = (Get-Content $goldenPath -Raw -Encoding UTF8).Replace("`r`n", "`n")
+        return ($expected -eq $normalized)
     }
 
     function Read-OrUpdateGolden {
         param([string]$Name, [string]$Actual)
         $null = Compare-OrUpdateGolden -Name $Name -Actual $Actual
         $p = Join-Path $GoldenDir $Name
-        if (Test-Path $p) { return (Get-Content $p -Raw -Encoding UTF8) }
+        # 返回值也要归一成 LF，否则调用方拿到的是检出时的换行，
+        # 跟它自己生成的 CRLF 对不上（本地能过、CI 挂，或反过来）
+        if (Test-Path $p) { return ((Get-Content $p -Raw -Encoding UTF8).Replace("`r`n", "`n")) }
         return $null
     }
 }
@@ -157,7 +163,8 @@ Describe 'build-from-spec.ps1 生成器' {
     It '视觉投影摘要与黄金文件一致' {
         $summary = (Get-GeneratedSummary | ConvertTo-Json -Depth 10)
         $expected = Read-OrUpdateGolden -Name 'SalesDash.visuals.json' -Actual $summary
-        $summary | Should -Be $expected -Because 'spec 里定义的视觉投影变了'
+        # Read-OrUpdateGolden 内部已把两边都归一成 LF，这里直接比
+        ($summary.Replace("`r`n", "`n")) | Should -Be $expected -Because 'spec 里定义的视觉投影变了'
     }
 }
 
